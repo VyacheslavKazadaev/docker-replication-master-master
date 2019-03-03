@@ -1,4 +1,3 @@
 .idea
-mysql
-mysql_slave1
-mysql_slave2
+masters/master1/data
+masters/master2/data
