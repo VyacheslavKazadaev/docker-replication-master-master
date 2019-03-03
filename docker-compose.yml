@@ -1,0 +1,60 @@
+# Версия docker-compose
+version: '3.7'
+# Список наших сервисов (контейнеров)
+services:
+  mariadb_master:
+    image: mariadb:10.3
+    ports:
+      - "3307:3306"
+    restart: always
+    volumes:
+      - ./mysql:/var/lib/mysql
+      - ./conf_mysql:/etc/mysql/conf.d
+      - ./mysql_dump:/docker-entrypoint-initdb.d
+    # задаем пароль для root пользователя
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: replication
+    networks:
+      - internal
+  mariadb_slave1:
+    image: mariadb:10.3
+    ports:
+      - "3308:3306"
+    restart: always
+    links:
+      - mariadb_master
+    volumes:
+      - ./mysql_slave1:/var/lib/mysql
+      - ./conf_slave1:/etc/mysql/conf.d
+      - ./mysql_dump:/docker-entrypoint-initdb.d
+    # задаем пароль для root пользователя
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: replication
+    networks:
+      - internal
+#  mariadb_slave2:
+#    image: mariadb:10.3
+#    ports:
+#      - "3309:3306"
+#    restart: always
+#    links:
+#      - mariadb_master
+#    volumes:
+#      - ./mysql_slave2:/var/lib/mysql
+#      - ./conf_slave2:/etc/mysql/conf.d
+#      - ./mysql_dump:/docker-entrypoint-initdb.d
+#    # задаем пароль для root пользователя
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: replication
+#    networks:
+#      - internal
+networks:
+  internal:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.100.0/28
