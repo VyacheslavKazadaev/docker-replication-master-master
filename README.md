@@ -13,5 +13,10 @@ and after starting setup replication. See commands inside ./build.sh.
 ```
 ./build.sh
 ```
+#### Clearing database data and creating containers again 
+
+```
+./build.sh --clean-db
+```
     
     
